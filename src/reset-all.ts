@@ -19,12 +19,14 @@ export async function main(ns: NS) {
   while (true) {
     const servers = findHackTargets(ns);
     //@ts-expect-error I don't know why this happens
-    const [currentTarget, currentData ]: [string, ServerData] = currentTargetName ?
-      servers.find(([n, d]) => currentTargetName == n) as [string, ServerData] : ["", {} as ServerData];
+    const [currentTarget, currentData ]: [string | undefined, ServerData | undefined] = currentTargetName ?
+      servers.find(([n, d]) => currentTargetName == n) as [string, ServerData] : [undefined, undefined];
     const [nextTarget, nextData] = servers.at(-1) as [string, ServerData];
     const moneyHasDecreased = !currentData || currentData.moneyAvailable < initialMoney;
     if (currentTarget !== nextTarget && moneyHasDecreased) {
       ns.killall("home", true);
+      ns.toast("Switching to new target: " + nextTarget, "info");
+      //ns.exec("command-and-control.js", "home", 1, minMoney);
       ns.exec("purchase-and-upgrade-servers.js", "home", 1, nextTarget, minMoney);
       ns.exec("restart-purchased-servers.js", "home", 1, nextTarget);
       ns.exec("hack-servers.js", "home", 1, nextTarget);

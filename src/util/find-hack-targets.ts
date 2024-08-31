@@ -3,6 +3,7 @@ import { NS } from "@ns";
 import { maxPortsRequired } from "util/max-ports-required";
 import { scanServers, ServerData } from "util/scan-servers";
 
+// returns appropriate servers to hack, sorted by max money ASCENDING
 /** @param {NS} ns */
 export function findHackTargets(ns: NS, ignoreConstraints = false) {
   const servers = scanServers(ns);
@@ -11,8 +12,8 @@ export function findHackTargets(ns: NS, ignoreConstraints = false) {
   const portsRequired = maxPortsRequired(ns);
   for (const [server, data] of servers) {
     if (ignoreConstraints || (data.hackable &&
-        data.hackingLevelRequired < userHackingLevel / 2 &&
-        data.portsRequired < portsRequired)) {
+        (data.hackingLevelRequired == 1 || data.hackingLevelRequired < userHackingLevel / 2) &&
+      data.portsRequired <= portsRequired)) {
       viableServers.set(server, data);
     }
   }

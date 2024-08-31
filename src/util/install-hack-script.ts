@@ -2,7 +2,7 @@ import { NS } from "@ns";
 
 /** @param {NS} ns */
 export function installHackScript(ns: NS, server: string, target: string) {
-  ns.scriptKill("util/weaken.js", server);
+  /*ns.scriptKill("util/weaken.js", server);
   ns.scriptKill("util/grow.js", server);
   ns.scriptKill("util/hack.js", server);
   ns.scp("util/weaken.js", server);
@@ -26,5 +26,13 @@ export function installHackScript(ns: NS, server: string, target: string) {
     ns.exec("util/weaken.js", server, numThreads, target, moneyThresh, securityThresh);
     ns.exec("util/grow.js", server, numThreads, target, moneyThresh, securityThresh);
     ns.exec("util/hack.js", server, numThreads, target, moneyThresh, securityThresh);
+  }*/
+
+  ns.scriptKill("util/multi-hack.js", server);
+  ns.scp("util/multi-hack.js", server);
+  const multiHackUsage = ns.getScriptRam("util/multi-hack.js");
+  const numThreads = Math.floor(ns.getServerMaxRam(server) / multiHackUsage);
+  if (numThreads > 0) {
+    ns.exec("util/multi-hack.js", server, numThreads, target);
   }
 }
