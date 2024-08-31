@@ -31,7 +31,7 @@ export function installHackScript(ns: NS, server: string, target: string) {
   ns.scriptKill("util/multi-hack.js", server);
   ns.scp("util/multi-hack.js", server);
   const multiHackUsage = ns.getScriptRam("util/multi-hack.js");
-  const numThreads = Math.floor(ns.getServerMaxRam(server) / multiHackUsage);
+  const numThreads = Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / multiHackUsage);
   if (numThreads > 0) {
     ns.exec("util/multi-hack.js", server, numThreads, target);
   }
