@@ -10,15 +10,24 @@ import { ServerData } from "./util/scan-servers";
 /** @param {NS} ns */
 export async function main(ns: NS) {
   const minMoney = (ns.args[0] as number | undefined ?? 0) * 1_000_000;
-  let currentTargetName: string | null = null;
+  let currentTargetName: string | undefined = ns.args[1] as string | undefined;
   // if money has decreased, we have successfully extracted money from
   // this server and are allowed to move on to the next one
-  // initialized to 0 to get the ball rolling on the first target
+  // initialized to infinity to get the ball rolling on the first target
   let initialMoney = Infinity;
   // eslint-disable-next-line no-constant-condition
+
+  if (currentTargetName) {
+    ns.killall("home", true);
+    initialMoney = ns.getServerMoneyAvailable(currentTargetName);
+    ns.toast("Switching to requested target: " + currentTargetName, "info");
+    ns.exec("purchase-and-upgrade-servers.js", "home", 1, currentTargetName, minMoney);
+    ns.exec("restart-purchased-servers.js", "home", 1, currentTargetName);
+    ns.exec("hack-servers.js", "home", 1, currentTargetName);
+    installHackScript(ns, "home", currentTargetName);
+  }
   while (true) {
     const servers = findHackTargets(ns);
-    //@ts-expect-error I don't know why this happens
     const [currentTarget, currentData ]: [string | undefined, ServerData | undefined] = currentTargetName ?
       servers.find(([n, d]) => currentTargetName == n) as [string, ServerData] : [undefined, undefined];
     const [nextTarget, nextData] = servers.at(-1) as [string, ServerData];
