@@ -11,12 +11,13 @@ export async function main(ns: NS) {
     route.push(target);
     const parent = servers.get(target)?.parent;
     if (!parent) {
-      // bug, should not happen
-      ns.tprint("No parent found for target", target);
+      // happens when you pass in a server that does not exist
+      ns.tprint("No parent found for target: ", target);
       ns.exit();
     }
     target = parent;
   }
   route.push("home");
-  ns.tprint(route.reverse());
+  const reversedRoute = route.reverse();
+  ns.tprint(reversedRoute.join(" -> "));
 }
