@@ -17,7 +17,7 @@ export interface ServerData {
 // servers (see below)
 /** @param {NS} ns */
 export function scanServers(ns: NS, maxDepth?: number) {
-  maxDepth = maxDepth ?? 50;
+  maxDepth = maxDepth ?? Infinity;
   const servers = new Map<string, ServerData>();
   servers.set("home", {
     depth: 0,
